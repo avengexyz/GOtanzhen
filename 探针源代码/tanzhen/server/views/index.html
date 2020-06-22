@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Go探针</title>
+
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="/static/css/animate.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
+
+</head>
+
+<body class="top-navigation">
+
+    <div id="wrapper">
+        <div id="page-wrapper" class="gray-bg">
+        <div class="row border-bottom white-bg">
+        <nav class="navbar navbar-static-top" role="navigation">
+            <div class="navbar-header">
+                <a href="#" class="navbar-brand">Go探针</a>
+            </div>
+        </nav>
+        </div>
+        <div class="wrapper wrapper-content">
+            <div class="container">
+                <!-- 探针框 -->
+                <div class="row" id="row1">
+                    {{/*循环接收到的数据*/}}
+                    {{range .}}
+                    <!-- 列容器块 --><!-- 手机xs 平板sm 桌面md 超大lg -->
+                    <div class="col-lg-12">
+                        <!-- 列内容 --><!-- 网页内容 -->
+                        <div class="ibox">
+                            <div class="ibox-title">
+                                <h5>{{.Data.A服务器名称}}</h5>
+                                <div class="ibox-tools">
+                                    <a class="collapse-link">
+                                        <i class="fa fa-chevron-up"></i>
+                                    </a>                
+                                    <a class="close-link">
+                                        <i class="fa fa-times"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="ibox-content">
+                            <div class="row">
+                                <div class="col-lg-4">
+                                <p>服务器当前时间:{{.Data.A服务器当前时间}}</p>
+                                <p>服务器开机时间:{{.Data.A开机时间}}</p>
+                                <p>服务器已运行:{{.Data.A运行时间}}秒</p>
+                                <div class="text">
+                                    <div class="m-r-md inline text-center">
+                                    <input type="text" value="{{.Data.Acpu百分比}}" class="dial m-r-sm" data-fgColor="#1AB394" data-width="85" data-height="85" disabled="disabled"/>
+                                    <p class="text-center">cpu使用率</p>
+                                    </div>
+                                    <div class="m-r-md inline text-center">
+                                    <input type="text" value="{{.Data.A内存百分比}}" class="dial m-r" data-fgColor="#1AB394" data-width="85" data-height="85" disabled="disabled"/>
+                                    <p class="text-center">内存使用率</p>
+                                    </div>
+                                    <div class="m-r-md inline ">
+                                    <input type="text" value="{{.Data.A硬盘百分比}}" class="dial m-r" data-fgColor="#1AB394" data-width="85" data-height="85" disabled="disabled"/>
+                                    <p class="text-center">硬盘使用率</p>
+                                    </div>
+                                </div>
+                                </div>
+                                <div class="col-lg-8">
+                                    <strong>CPU</strong>&nbsp;&nbsp;&nbsp;频率:{{.Data.Acpu频率}}mhz&nbsp;&nbsp;&nbsp;核心数:{{.Data.Acpu核数}}&nbsp;&nbsp;&nbsp;架构:{{.Data.Acpu架构}}&nbsp;&nbsp;&nbsp;型号:{{.Data.Acpu型号}}
+                                    <div class="hr-line-dashed"></div>
+                                    <strong>内存</strong>&nbsp;&nbsp;&nbsp;总内存:{{.Data.A总内存}}G&nbsp;&nbsp;&nbsp;可用内存:{{.Data.A可用内存}}G&nbsp;&nbsp;&nbsp;已用内存:{{.Data.A已用内存}}G
+                                    <div class="hr-line-dashed"></div>
+                                    <strong>硬盘</strong>&nbsp;&nbsp;&nbsp;总内存:{{.Data.A硬盘总大小}}G&nbsp;&nbsp;&nbsp;可用硬盘:{{.Data.A可用硬盘大小}}G&nbsp;&nbsp;&nbsp;已用硬盘:{{.Data.A已用硬盘大小}}G
+                                    <div class="hr-line-dashed"></div>
+                                    <strong>网络</strong>&nbsp;&nbsp;&nbsp;上传:{{.Data.A发送的字节数}}&nbsp;&nbsp;&nbsp;下载:{{.Data.A收到的字节数}}
+                                </div>
+                            </div>
+                    </div>
+                        </div>
+                        <!-- 列内容 -->
+                    </div>
+                    <!-- 列容器块 -->
+                    {{end}}
+                </div>
+                <!-- 探针框 -->
+            </div>
+
+        </div>
+
+        </div>
+        </div>
+
+</body>
+    <!-- 基础js -->
+    <script src="/static/js/jquery-3.1.1.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="/static/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+    <!-- 模板js -->
+    <script src="/static/js/inspinia.js"></script>
+    <script src="/static/js/plugins/pace/pace.min.js"></script>
+
+    <!-- JSKnob -->
+   <script src="/static/js/plugins/jsKnob/jquery.knob.js"></script>
+   <script>
+   $(function(){
+       //初始化数据表
+       $(".dial").knob();
+
+    //调用刷新
+    auto();
+
+    //刷新方法
+    function auto() {
+        //定时器3秒刷新一次
+        timer = setInterval(function() {
+               //ajax请求数据
+                $.ajax({
+                    url:"/ajax",
+                    type:"get",
+                    success:function(data){
+
+                       $.each(data,function(i,item){
+
+                        $(".ibox:eq("+i+") .dial:eq(0)").val(item.data.cpu百分比).trigger('change')
+                        $(".ibox:eq("+i+") .dial:eq(1)").val(item.data.内存百分比).trigger('change')
+                        $(".ibox:eq("+i+") .dial:eq(2)").val(item.data.硬盘百分比).trigger('change')
+                        
+                            
+                       })
+                    }
+                })
+        }, 3000)
+    }
+
+
+   })
+   </script>
+</html>
